@@ -1,20 +1,27 @@
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# Replace this URL with the website you want to request
+# Target URL
 url = 'http://localhost:8080/account/api/v1/portal/get/account'
 
-# Number of requests
-num_requests = 1000
+# Number of total requests and number of concurrent threads
+num_requests = 8000
+max_workers = 500  # You can tune this (e.g., 200, 300, etc.)
 
-for index, _ in enumerate(range(num_requests)):
+def send_request(index):
     try:
         response = requests.get(url)
-        # You can add more code here to process the response, if needed
         if response.status_code == 200:
-            print(f"[{index + 1}] Request successful: {response.status_code}")
+            return f"[{index + 1}] ✅ Success: {response.status_code}"
         else:
-            print(f"[{index + 1}] Request failed: {response.status_code}")
+            return f"[{index + 1}] ❌ Failed: {response.status_code}"
     except Exception as e:
-        print(f"[{index + 1}] An error occurred: {e}")
+        return f"[{index + 1}] ⚠️ Error: {e}"
 
-print("All requests completed.")
+# Main execution using ThreadPoolExecutor
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    futures = [executor.submit(send_request, i) for i in range(num_requests)]
+    for future in as_completed(futures):
+        print(future.result())
+
+print("🚀 All requests completed.")
