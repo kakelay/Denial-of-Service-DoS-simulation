@@ -2,11 +2,11 @@ import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Target URL
-url = 'http://localhost:8080/account/api/v1/portal/get/account'
+url = 'https://www.pharmacafe.com'
 
 # Number of total requests and number of concurrent threads
-num_requests = 8000
-max_workers = 500  # You can tune this (e.g., 200, 300, etc.)
+num_requests = 5000
+max_workers = 20  # You can tune this (e.g., 200, 300, etc.)
 
 def send_request(index):
     try:
